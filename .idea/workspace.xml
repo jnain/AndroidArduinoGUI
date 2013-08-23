@@ -42,7 +42,7 @@
     </option>
   </component>
   <component name="AndroidLogFilters">
-    <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="fatal" />
+    <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="coucou" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="061dc0a7-eb8a-4892-92a1-e5723beadc66" name="Default" comment="" />
@@ -55,7 +55,7 @@
     <file path="/dialoglayout.xml" changelist="061dc0a7-eb8a-4892-92a1-e5723beadc66" time="1377253267265" ignored="false" />
     <file path="/item.xml" changelist="061dc0a7-eb8a-4892-92a1-e5723beadc66" time="1377251927232" ignored="false" />
     <file path="/pom.xml" changelist="061dc0a7-eb8a-4892-92a1-e5723beadc66" time="1377260809805" ignored="false" />
-    <file path="/GUIController.java" changelist="061dc0a7-eb8a-4892-92a1-e5723beadc66" time="1377267951337" ignored="false" />
+    <file path="/GUIController.java" changelist="061dc0a7-eb8a-4892-92a1-e5723beadc66" time="1377268509060" ignored="false" />
     <file path="$PROJECT_DIR$/../JArduino/jarduino.core/src/main/java/org/sintef/jarduino/msg/DigitalWriteMsg.java" changelist="061dc0a7-eb8a-4892-92a1-e5723beadc66" time="1377261981298" ignored="false" />
     <file path="$PROJECT_DIR$/../JArduino/jarduino.samples.android/pom.xml" changelist="061dc0a7-eb8a-4892-92a1-e5723beadc66" time="1377260848669" ignored="false" />
     <file path="$PROJECT_DIR$/../JArduino/jarduino.gui/src/main/java/org/sintef/jarduino/gui/InteractiveJArduinoDataGUIClientAdvanced.java" changelist="061dc0a7-eb8a-4892-92a1-e5723beadc66" time="1377263440065" ignored="false" />
@@ -141,7 +141,7 @@
       <file leaf-file-name="GUIController.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/org/sintef/jarduino/GUIController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="53" column="34" selection-start="1941" selection-end="1941" vertical-scroll-proportion="-0.14127424">
+            <state line="61" column="60" selection-start="2181" selection-end="2181" vertical-scroll-proportion="-2.019337">
               <folding />
             </state>
           </provider>
@@ -281,18 +281,19 @@
   </component>
   <component name="PropertiesComponent">
     <property name="GoToFile.includeJavaFiles" value="false" />
-    <property name="GoToClass.toSaveIncludeLibraries" value="false" />
     <property name="options.splitter.main.proportions" value="0.3" />
-    <property name="recentsLimit" value="5" />
-    <property name="options.lastSelected" value="project.propVCSSupport.Mappings" />
     <property name="MemberChooser.sorted" value="false" />
-    <property name="restartRequiresConfirmation" value="true" />
-    <property name="MemberChooser.showClasses" value="true" />
+    <property name="options.lastSelected" value="project.propVCSSupport.Mappings" />
+    <property name="recentsLimit" value="5" />
     <property name="AndroidLayoutSelectedEditor" value="android-designer" />
-    <property name="GoToClass.includeLibraries" value="false" />
-    <property name="options.searchVisible" value="true" />
-    <property name="options.splitter.details.proportions" value="0.2" />
     <property name="MemberChooser.copyJavadoc" value="false" />
+    <property name="GoToClass.toSaveIncludeLibraries" value="false" />
+    <property name="restartRequiresConfirmation" value="true" />
+    <property name="FullScreen" value="false" />
+    <property name="MemberChooser.showClasses" value="true" />
+    <property name="GoToClass.includeLibraries" value="false" />
+    <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="options.searchVisible" value="true" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -496,13 +497,13 @@
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32885906" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32718122" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Android" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32718122" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25" sideWeight="0.67114097" order="1" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32885906" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25" sideWeight="0.6728188" order="1" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32885906" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Documentation" active="true" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" x="92" y="92" width="1182" height="554" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -686,7 +687,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/sintef/jarduino/GUIController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="53" column="34" selection-start="1941" selection-end="1941" vertical-scroll-proportion="-0.14127424">
+        <state line="61" column="60" selection-start="2181" selection-end="2181" vertical-scroll-proportion="-2.019337">
           <folding />
         </state>
       </provider>

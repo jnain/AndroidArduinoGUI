@@ -59,7 +59,7 @@ public class GUIController implements JArduinoObserver, JArduinoClientSubject {
     private void doSend(FixedSizePacket data){
         if (data != null) {
             Log.d(TAG, data+" --> "+data.getPacket());
-            logger.addView(createTextView(data + " --> " + data.getPacket()));
+            logger.addView(createTextView(data.toString()));
             for (JArduinoClientObserver h : handlers){
                 h.receiveMsg(data.getPacket());
             }
@@ -110,6 +110,7 @@ public class GUIController implements JArduinoObserver, JArduinoClientSubject {
         if (data != null) {
             //gui.writeToLog( " ["+dateFormat.format(new Date(System.currentTimeMillis()))+"]: "+data.toString()+" --> "+FixedSizePacket.toString(packet));
             Log.d(TAG, " [" + dateFormat.format(new Date(System.currentTimeMillis())) + "]: " + data.toString() + " --> " + FixedSizePacket.toString(packet));
+            logger.addView(createTextView(data.toString()));
             //TODO Add
         }
     }
