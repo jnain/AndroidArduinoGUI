@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android"
+        android:background="@drawable/bg_arduino">
+    <TableRow android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/tableRow5"
+              android:minHeight="221dp" android:longClickable="true">
+        <ImageView
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/imageView" android:layout_column="2"/>
+    </TableRow>
+    <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+        <Button
+                android:layout_width="60dp"
+                android:layout_height="16dp"
+                android:id="@+id/pin13" android:layout_column="3" android:layout_marginTop="0dp"
+                android:visibility="visible" android:background="@drawable/bg_button" android:text="pin13"
+                android:textSize="0dp"/>
+    </TableRow>
+    <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+        <Button android:layout_width="60dp" android:layout_height="16dp"
+                android:id="@+id/pin12" android:layout_column="3" android:layout_marginTop="0dp"
+                android:visibility="visible" android:background="@drawable/bg_button" android:text="pin12"
+                android:textSize="0dp"/>
+    </TableRow>
+    <TableRow android:layout_width="fill_parent" android:layout_height="fill_parent" android:id="@+id/tableRow">
+        <Button android:layout_width="60dp" android:layout_height="16dp"
+                android:id="@+id/pin11" android:layout_column="3" android:layout_marginTop="0dp"
+                android:visibility="visible" android:background="@drawable/bg_button" android:text="pin11"
+                android:textSize="0dp"/>
+    </TableRow>
+    <TableRow android:layout_width="fill_parent" android:layout_height="fill_parent" android:id="@+id/tableRow1">
+        <Button android:layout_width="60dp" android:layout_height="17dp"
+                android:id="@+id/pin10" android:layout_column="3" android:layout_marginTop="0dp"
+                android:visibility="visible" android:background="@drawable/bg_button" android:text="pin10"
+                android:textSize="0dp"/>
+    </TableRow>
+    <TableRow android:layout_width="fill_parent" android:layout_height="fill_parent" android:id="@+id/tableRow2">
+        <Button android:layout_width="60dp" android:layout_height="16dp"
+                android:id="@+id/pin9" android:layout_column="3" android:layout_marginTop="0dp"
+                android:visibility="visible" android:background="@drawable/bg_button" android:text="pin9"
+                android:textSize="0dp"/>
+    </TableRow>
+    <TableRow android:layout_width="fill_parent" android:layout_height="fill_parent" android:id="@+id/tableRow3">
+        <Button android:layout_width="60dp" android:layout_height="17dp"
+                android:id="@+id/pin8" android:layout_column="3" android:layout_marginTop="0dp"
+                android:visibility="visible" android:background="@drawable/bg_button" android:text="pin8"
+                android:textSize="0dp"/>
+    </TableRow>
+    <TableRow android:layout_width="fill_parent" android:layout_height="fill_parent" android:id="@+id/tableRow4">
+        <Button android:layout_width="60dp" android:layout_height="17dp"
+                android:id="@+id/pin7" android:layout_column="3" android:layout_marginTop="8dp"
+                android:visibility="visible" android:background="@drawable/bg_button" android:text="pin7"
+                android:textSize="0dp"/>
+    </TableRow>
+    <TableRow android:layout_width="fill_parent" android:layout_height="fill_parent" android:id="@+id/tableRow6">
+        <Button android:layout_width="60dp" android:layout_height="16dp"
+                android:id="@+id/pin6" android:layout_column="3" android:visibility="visible"
+                android:background="@drawable/bg_button" android:text="pin6" android:textSize="0dp"/>
+    </TableRow>
+    <TableRow android:layout_width="fill_parent" android:layout_height="fill_parent" android:id="@+id/tableRow7">
+        <Button
+                android:layout_width="60dp"
+                android:layout_height="17dp"
+                android:id="@+id/pinA0" android:layout_column="1" android:layout_marginTop="0dp"
+                android:visibility="visible" android:background="@drawable/bg_button" android:text="pinA0"
+                android:textSize="0dp"/>
+        <Button android:layout_width="60dp" android:layout_height="17dp"
+                android:id="@+id/pin5" android:layout_column="3" android:layout_marginTop="0dp"
+                android:visibility="visible" android:background="@drawable/bg_button" android:text="pin5"
+                android:textSize="0dp"/>
+    </TableRow>
+    <TableRow android:layout_width="fill_parent" android:layout_height="fill_parent" android:id="@+id/tableRow8">
+        <Button android:layout_width="60dp" android:layout_height="16dp"
+                android:id="@+id/pinA1" android:layout_column="1"
+                android:visibility="visible" android:background="@drawable/bg_button" android:text="pinA1"
+                android:textSize="0dp"/>
+        <Button android:layout_width="60dp" android:layout_height="16dp"
+                android:id="@+id/pin4" android:layout_column="3" android:layout_marginTop="0dp"
+                android:visibility="visible" android:background="@drawable/bg_button" android:text="pin4"
+                android:textSize="0dp"/>
+    </TableRow>
+    <TableRow android:layout_width="fill_parent" android:layout_height="fill_parent" android:id="@+id/tableRow9">
+        <Button android:layout_width="60dp" android:layout_height="16dp"
+                android:id="@+id/pinA2" android:layout_column="1" android:layout_marginTop="0dp"
+                android:visibility="visible" android:background="@drawable/bg_button" android:text="pinA2"
+                android:textSize="0dp"/>
+        <Button android:layout_width="60dp" android:layout_height="16dp"
+                android:id="@+id/pin3" android:layout_column="3" android:layout_marginTop="0dp"
+                android:visibility="visible" android:background="@drawable/bg_button" android:text="pin3"
+                android:textSize="0dp"/>
+    </TableRow>
+    <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+        <Button android:layout_width="60dp" android:layout_height="17dp"
+                android:id="@+id/pinA3" android:layout_column="1" android:layout_marginTop="0dp"
+                android:visibility="visible" android:background="@drawable/bg_button" android:text="pinA3"
+                android:textSize="0dp"/>
+        <Button android:layout_width="60dp" android:layout_height="17dp"
+                android:id="@+id/pin2" android:layout_column="3" android:layout_marginTop="0dp"
+                android:visibility="visible" android:background="@drawable/bg_button" android:text="pin2"
+                android:textSize="0dp"/>
+    </TableRow>
+    <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+        <Button android:layout_width="60dp" android:layout_height="16dp"
+                android:id="@+id/pinA4" android:layout_column="1" android:layout_marginTop="0dp"
+                android:visibility="visible" android:background="@drawable/bg_button" android:text="pinA4"
+                android:textSize="0dp"/>
+    </TableRow>
+    <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+        <Button android:layout_width="60dp" android:layout_height="16dp"
+                android:id="@+id/pinA5" android:layout_column="1" android:layout_marginTop="0dp"
+                android:visibility="visible" android:background="@drawable/bg_button" android:text="pinA5"
+                android:textSize="0dp"/>
+    </TableRow>
+</TableLayout>
