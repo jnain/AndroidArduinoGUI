@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/AndroidJArduinoGUI.iml" filepath="$PROJECT_DIR$/AndroidJArduinoGUI.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android.gui.iml" filepath="$PROJECT_DIR$/android.gui.iml" />
     </modules>
   </component>
 </project>

@@ -17,7 +17,11 @@
  */
 package org.sintef.jarduino;
 
+import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import org.sintef.jarduino.comm.AndroidBluetooth4JArduino;
 import org.sintef.jarduino.observer.JArduinoClientObserver;
 import org.sintef.jarduino.observer.JArduinoClientSubject;
@@ -34,15 +38,28 @@ public class GUIController implements JArduinoObserver, JArduinoClientSubject {
     private SimpleDateFormat dateFormat;
     private JArduino mJArduino;
     private String TAG = "GUIController";
+    private LinearLayout logger;
+    private Context context;
 
-    public GUIController(){
+    public GUIController(LinearLayout logger, Context context){
+        this.logger = logger;
+        this.context = context;
         handlers = new LinkedList<JArduinoClientObserver>();
         dateFormat = new SimpleDateFormat("dd MMM yyy 'at' HH:mm:ss.SSS");
+    }
+
+    TextView createTextView(String s){
+        TextView t = new TextView(context);
+        t.setTextSize(12);
+        t.setTextColor(Color.BLACK);
+        t.setText(s);
+        return t;
     }
 
     private void doSend(FixedSizePacket data){
         if (data != null) {
             Log.d(TAG, data+" --> "+data.getPacket());
+            logger.addView(createTextView(data + " --> " + data.getPacket()));
             for (JArduinoClientObserver h : handlers){
                 h.receiveMsg(data.getPacket());
             }

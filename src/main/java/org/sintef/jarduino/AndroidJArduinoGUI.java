@@ -34,6 +34,7 @@ public class AndroidJArduinoGUI extends Activity {
     List<Button> buttons = new ArrayList<Button>();
     static final int CUSTOM_DIALOG_ID = 0;
     ListView dialog_ListView;
+    LinearLayout logger;
     String[] listContent = {
             "Digital HIGH",
             "Digital LOW",
@@ -75,6 +76,7 @@ public class AndroidJArduinoGUI extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        logger = (LinearLayout) findViewById(R.id.log);
 
         initButtons();
 
@@ -123,7 +125,7 @@ public class AndroidJArduinoGUI extends Activity {
         }
 
 
-        mController = new GUIController();
+        mController = new GUIController(logger, getApplicationContext());
         AndroidBluetooth4JArduino device = new AndroidBluetooth4JArduino(new AndroidBluetoothConfiguration(mmSocket));
         mController.register(device);
         device.register(mController);
