@@ -17,7 +17,6 @@
  */
 package org.sintef.jarduino;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
@@ -30,7 +29,6 @@ import org.sintef.jarduino.observer.JArduinoClientSubject;
 import org.sintef.jarduino.observer.JArduinoObserver;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -41,26 +39,29 @@ public class GUIController implements JArduinoObserver, JArduinoClientSubject {
     private JArduino mJArduino;
     private String TAG = "GUIController";
     private LinearLayout logger;
-    private Context context;
 
-    public GUIController(LinearLayout logger, Context context){
+    public GUIController(LinearLayout logger){
         this.logger = logger;
         this.logger.setVerticalScrollBarEnabled(true);
-        this.context = context;
         handlers = new LinkedList<JArduinoClientObserver>();
         dateFormat = new SimpleDateFormat("dd MMM yyy 'at' HH:mm:ss.SSS");
     }
 
-    void addToLogger(String s){
-        logger.addView(createTextView(s));
+    private void addToLogger(String s){
+        TextView tv = createTextView(s);
+        logger.addView(tv);  // block here one the addView dunno why. (not in createTextView)
         ((ScrollView)logger.getParent()).fullScroll(View.FOCUS_DOWN);
     }
 
-    TextView createTextView(String s){
-        TextView t = new TextView(context);
+    private TextView createTextView(String s){
+        TextView t = new TextView(logger.getContext());
         t.setTextSize(12);
         t.setTextColor(Color.BLACK);
         t.setText(s);
+        /*LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.FILL_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT);
+        t.setLayoutParams(params);*/
         return t;
     }
 
@@ -113,10 +114,9 @@ public class GUIController implements JArduinoObserver, JArduinoClientSubject {
 
     public final void receiveMessage(byte[] packet){
         FixedSizePacket data = JArduinoProtocol.createMessageFromPacket(packet);
-
         if (data != null) {
             //gui.writeToLog( " ["+dateFormat.format(new Date(System.currentTimeMillis()))+"]: "+data.toString()+" --> "+FixedSizePacket.toString(packet));
-            Log.d(TAG, " [" + dateFormat.format(new Date(System.currentTimeMillis())) + "]: " + data.toString() + " --> " + FixedSizePacket.toString(packet));
+            Log.d(TAG, /*" [" + dateFormat.format(new Date(System.currentTimeMillis())) + "]: " +*/ data.toString() /*+ " --> " + FixedSizePacket.toString(packet)*/);
             addToLogger(data.toString());
             //TODO Add
         }

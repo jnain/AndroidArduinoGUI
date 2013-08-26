@@ -35,12 +35,14 @@ public class AndroidJArduinoGUI extends Activity {
     static final int CUSTOM_DIALOG_ID = 0;
     ListView dialog_ListView;
     LinearLayout logger;
-    String[] listContent = {
+    Dialog dialog = null;
+    String[] menuContent = {
             "Digital HIGH",
             "Digital LOW",
             "Digital READ",
-            "Analog READ"};
-    Map<String, AnalogPin> analog = new Hashtable<String, AnalogPin>(){{
+            "Analog READ",
+            "Analog WRITE"};
+    Map<String, AnalogPin> analogIn = new Hashtable<String, AnalogPin>(){{
         put("pinA0", AnalogPin.A_0);
         put("pinA1", AnalogPin.A_1);
         put("pinA2", AnalogPin.A_2);
@@ -61,6 +63,14 @@ public class AndroidJArduinoGUI extends Activity {
         put("pin11", DigitalPin.PIN_11);
         put("pin12", DigitalPin.PIN_12);
         put("pin13", DigitalPin.PIN_13);
+    }};
+    Map<String, PWMPin> analogOut = new Hashtable<String, PWMPin>(){{
+        put("pin3", PWMPin.PWM_PIN_3);
+        put("pin5", PWMPin.PWM_PIN_5);
+        put("pin6", PWMPin.PWM_PIN_6);
+        put("pin9", PWMPin.PWM_PIN_9);
+        put("pin10", PWMPin.PWM_PIN_10);
+        put("pin11", PWMPin.PWM_PIN_11);
     }};
     private String clickedButton = null;
 
@@ -92,7 +102,7 @@ public class AndroidJArduinoGUI extends Activity {
 
         BluetoothDevice mmDevice = null;
 
-        List<String> mArray = new ArrayList<String>();
+        //List<String> mArray = new ArrayList<String>();
         Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
         // If there are paired devices
         if (pairedDevices.size() > 0) {
@@ -101,7 +111,7 @@ public class AndroidJArduinoGUI extends Activity {
                 // Add the name and address to an array adapter to show in a ListView
                 if(device.getName().equals(deviceName))
                     mmDevice = device;
-                mArray.add(device.getName() + "\n" + device.getAddress());
+                //mArray.add(device.getName() + "\n" + device.getAddress());
             }
         }
 
@@ -125,7 +135,7 @@ public class AndroidJArduinoGUI extends Activity {
         }
 
 
-        mController = new GUIController(logger, getApplicationContext());
+        mController = new GUIController(logger);
         AndroidBluetooth4JArduino device = new AndroidBluetooth4JArduino(new AndroidBluetoothConfiguration(mmSocket));
         mController.register(device);
         device.register(mController);
@@ -133,10 +143,6 @@ public class AndroidJArduinoGUI extends Activity {
     }
 
     void initButtons(){
-        buttons.add(((Button) findViewById(R.id.pin10)));
-        buttons.add(((Button) findViewById(R.id.pin11)));
-        buttons.add(((Button) findViewById(R.id.pin12)));
-        buttons.add(((Button) findViewById(R.id.pin13)));
         buttons.add(((Button) findViewById(R.id.pin2)));
         buttons.add(((Button) findViewById(R.id.pin3)));
         buttons.add(((Button) findViewById(R.id.pin4)));
@@ -145,7 +151,10 @@ public class AndroidJArduinoGUI extends Activity {
         buttons.add(((Button) findViewById(R.id.pin7)));
         buttons.add(((Button) findViewById(R.id.pin8)));
         buttons.add(((Button) findViewById(R.id.pin9)));
-        buttons.add(((Button) findViewById(R.id.pinA0)));
+        buttons.add(((Button) findViewById(R.id.pin10)));
+        buttons.add(((Button) findViewById(R.id.pin11)));
+        buttons.add(((Button) findViewById(R.id.pin12)));
+        buttons.add(((Button) findViewById(R.id.pin13)));
         buttons.add(((Button) findViewById(R.id.pinA0)));
         buttons.add(((Button) findViewById(R.id.pinA1)));
         buttons.add(((Button) findViewById(R.id.pinA2)));
@@ -166,13 +175,12 @@ public class AndroidJArduinoGUI extends Activity {
     @Override
     protected Dialog onCreateDialog(int id) {
 
-        Dialog dialog = null;
-
         switch(id) {
             case CUSTOM_DIALOG_ID:
                 dialog = new Dialog(this);
                 dialog.setContentView(R.layout.dialoglayout);
-                dialog.setTitle("Action");
+
+                final TextView tv = ((TextView) findViewById(R.id.textView));
 
                 dialog.setCancelable(true);
                 dialog.setCanceledOnTouchOutside(true);
@@ -199,7 +207,7 @@ public class AndroidJArduinoGUI extends Activity {
                 dialog_ListView = (ListView)dialog.findViewById(R.id.dialoglist);
                 ArrayAdapter<String> adapter
                         = new ArrayAdapter<String>(this,
-                        R.layout.item, listContent);
+                        R.layout.item, menuContent);
                 dialog_ListView.setAdapter(adapter);
                 dialog_ListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
                     public void onItemClick(AdapterView<?> parent, View view,
@@ -216,7 +224,14 @@ public class AndroidJArduinoGUI extends Activity {
                                 mController.senddigitalRead(digital.get(pin));
                                 break;
                             case 3:
-                                mController.sendanalogRead(analog.get(pin));
+                                mController.sendanalogRead(analogIn.get(pin));
+                                break;
+                            case 4:
+                                int analogValue = Integer.parseInt(tv.getText().toString());
+                                if(analogValue>255){
+                                    break;
+                                }
+                                mController.sendanalogWrite(analogOut.get(pin), Integer.valueOf(analogValue).byteValue());
                                 break;
                         }
 
@@ -235,7 +250,7 @@ public class AndroidJArduinoGUI extends Activity {
         super.onPrepareDialog(id, dialog, bundle);
         switch(id) {
             case CUSTOM_DIALOG_ID:
-                //
+                dialog.setTitle("Action on " + clickedButton);
                 break;
         }
 
