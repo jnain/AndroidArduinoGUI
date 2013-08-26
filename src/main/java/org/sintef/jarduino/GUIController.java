@@ -20,7 +20,9 @@ package org.sintef.jarduino;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.Log;
+import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import org.sintef.jarduino.comm.AndroidBluetooth4JArduino;
 import org.sintef.jarduino.observer.JArduinoClientObserver;
@@ -43,9 +45,15 @@ public class GUIController implements JArduinoObserver, JArduinoClientSubject {
 
     public GUIController(LinearLayout logger, Context context){
         this.logger = logger;
+        this.logger.setVerticalScrollBarEnabled(true);
         this.context = context;
         handlers = new LinkedList<JArduinoClientObserver>();
         dateFormat = new SimpleDateFormat("dd MMM yyy 'at' HH:mm:ss.SSS");
+    }
+
+    void addToLogger(String s){
+        logger.addView(createTextView(s));
+        ((ScrollView)logger.getParent()).fullScroll(View.FOCUS_DOWN);
     }
 
     TextView createTextView(String s){
@@ -59,7 +67,7 @@ public class GUIController implements JArduinoObserver, JArduinoClientSubject {
     private void doSend(FixedSizePacket data){
         if (data != null) {
             Log.d(TAG, data+" --> "+data.getPacket());
-            logger.addView(createTextView(data.toString()));
+            addToLogger(data.toString());
             for (JArduinoClientObserver h : handlers){
                 h.receiveMsg(data.getPacket());
             }
@@ -85,7 +93,6 @@ public class GUIController implements JArduinoObserver, JArduinoClientSubject {
         FixedSizePacket fsp = null;
         fsp = JArduinoProtocol.createDigitalWrite(pin, value);
         doSend(fsp);
-        //digitalWrite(DigitalPin.PIN_13, DigitalState.LOW);
     }
 
     public final void sendanalogRead(AnalogPin pin) {
@@ -110,7 +117,7 @@ public class GUIController implements JArduinoObserver, JArduinoClientSubject {
         if (data != null) {
             //gui.writeToLog( " ["+dateFormat.format(new Date(System.currentTimeMillis()))+"]: "+data.toString()+" --> "+FixedSizePacket.toString(packet));
             Log.d(TAG, " [" + dateFormat.format(new Date(System.currentTimeMillis())) + "]: " + data.toString() + " --> " + FixedSizePacket.toString(packet));
-            logger.addView(createTextView(data.toString()));
+            addToLogger(data.toString());
             //TODO Add
         }
     }
