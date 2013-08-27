@@ -32,16 +32,21 @@ public class AndroidJArduinoGUI extends Activity {
     private String deviceName = "FireFly-4101";
     private int REQUEST_ENABLE_BT = 2000; //What you want here.
     List<Button> buttons = new ArrayList<Button>();
+    Button ping;
     static final int CUSTOM_DIALOG_ID = 0;
     ListView dialog_ListView;
-    LinearLayout logger;
+    ArrayAdapter<String> logger;
+    ListView logList;
     Dialog dialog = null;
     String[] menuContent = {
+            "PinMode INPUT",
+            "PinMode OUTPUT",
             "Digital HIGH",
             "Digital LOW",
             "Digital READ",
             "Analog READ",
-            "Analog WRITE"};
+            "Analog WRITE"
+    };
     Map<String, AnalogPin> analogIn = new Hashtable<String, AnalogPin>(){{
         put("pinA0", AnalogPin.A_0);
         put("pinA1", AnalogPin.A_1);
@@ -63,6 +68,12 @@ public class AndroidJArduinoGUI extends Activity {
         put("pin11", DigitalPin.PIN_11);
         put("pin12", DigitalPin.PIN_12);
         put("pin13", DigitalPin.PIN_13);
+        put("pinA0", DigitalPin.A_0);
+        put("pinA1", DigitalPin.A_1);
+        put("pinA2", DigitalPin.A_2);
+        put("pinA3", DigitalPin.A_3);
+        put("pinA4", DigitalPin.A_4);
+        put("pinA5", DigitalPin.A_5);
     }};
     Map<String, PWMPin> analogOut = new Hashtable<String, PWMPin>(){{
         put("pin3", PWMPin.PWM_PIN_3);
@@ -85,8 +96,15 @@ public class AndroidJArduinoGUI extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getWindow().setBackgroundDrawableResource(R.drawable.bg_arduino);
+
         setContentView(R.layout.main);
-        logger = (LinearLayout) findViewById(R.id.log);
+        logList = (ListView) findViewById(R.id.log);
+        logger = new ArrayAdapter<String>(getApplicationContext(), R.layout.logitem);
+        logList.setAdapter(logger);
+        logList.setVerticalScrollBarEnabled(true);
+        ((LinearLayout)logList.getParent()).setVerticalScrollBarEnabled(true);
 
         initButtons();
 
@@ -116,7 +134,7 @@ public class AndroidJArduinoGUI extends Activity {
         }
 
         //Creating the socket.
-        BluetoothSocket mmSocket;
+        final BluetoothSocket mmSocket;
         BluetoothSocket tmp = null;
 
         UUID myUUID = UUID.fromString(mUUID);
@@ -134,12 +152,18 @@ public class AndroidJArduinoGUI extends Activity {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
+        Thread mThread = new Thread(){
+            @Override
+            public void run() {
+                super.run();    //To change body of overridden methods use File | Settings | File Templates.
 
-        mController = new GUIController(logger);
-        AndroidBluetooth4JArduino device = new AndroidBluetooth4JArduino(new AndroidBluetoothConfiguration(mmSocket));
-        mController.register(device);
-        device.register(mController);
-
+                mController = new GUIController(logList, AndroidJArduinoGUI.this);
+                AndroidBluetooth4JArduino device = new AndroidBluetooth4JArduino(new AndroidBluetoothConfiguration(mmSocket));
+                mController.register(device);
+                device.register(mController);
+            }
+        };
+        mThread.run();
     }
 
     void initButtons(){
@@ -161,6 +185,7 @@ public class AndroidJArduinoGUI extends Activity {
         buttons.add(((Button) findViewById(R.id.pinA3)));
         buttons.add(((Button) findViewById(R.id.pinA4)));
         buttons.add(((Button) findViewById(R.id.pinA5)));
+        ping = (Button)findViewById(R.id.ping);
 
         for(final Button b : buttons){
             b.setOnClickListener(new Button.OnClickListener(){
@@ -170,6 +195,11 @@ public class AndroidJArduinoGUI extends Activity {
                 }
             });
         }
+        ping.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View view) {
+                mController.sendping();
+            }
+        });
     }
 
     @Override
@@ -215,18 +245,24 @@ public class AndroidJArduinoGUI extends Activity {
                         String pin = clickedButton;
                         switch(position){
                             case 0:
-                                mController.senddigitalWrite(digital.get(pin), DigitalState.HIGH);
+                                mController.sendpinMode(PinMode.INPUT, digital.get(pin));
                                 break;
                             case 1:
-                                mController.senddigitalWrite(digital.get(pin), DigitalState.LOW);
+                                mController.sendpinMode(PinMode.OUTPUT, digital.get(pin));
                                 break;
                             case 2:
-                                mController.senddigitalRead(digital.get(pin));
+                                mController.senddigitalWrite(digital.get(pin), DigitalState.HIGH);
                                 break;
                             case 3:
-                                mController.sendanalogRead(analogIn.get(pin));
+                                mController.senddigitalWrite(digital.get(pin), DigitalState.LOW);
                                 break;
                             case 4:
+                                mController.senddigitalRead(digital.get(pin));
+                                break;
+                            case 5:
+                                mController.sendanalogRead(analogIn.get(pin));
+                                break;
+                            case 6:
                                 int analogValue = Integer.parseInt(tv.getText().toString());
                                 if(analogValue>255){
                                     break;

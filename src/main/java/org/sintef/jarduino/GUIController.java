@@ -17,12 +17,10 @@
  */
 package org.sintef.jarduino;
 
-import android.graphics.Color;
+import android.app.Activity;
 import android.util.Log;
-import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import org.sintef.jarduino.comm.AndroidBluetooth4JArduino;
 import org.sintef.jarduino.observer.JArduinoClientObserver;
 import org.sintef.jarduino.observer.JArduinoClientSubject;
@@ -38,31 +36,27 @@ public class GUIController implements JArduinoObserver, JArduinoClientSubject {
     private SimpleDateFormat dateFormat;
     private JArduino mJArduino;
     private String TAG = "GUIController";
-    private LinearLayout logger;
+    private ListView logList;
+    private Activity mActivity;
 
-    public GUIController(LinearLayout logger){
-        this.logger = logger;
-        this.logger.setVerticalScrollBarEnabled(true);
+    public GUIController(ListView logger, Activity activity){
+        this.logList = logger;
+        mActivity = activity;
         handlers = new LinkedList<JArduinoClientObserver>();
         dateFormat = new SimpleDateFormat("dd MMM yyy 'at' HH:mm:ss.SSS");
     }
 
     private void addToLogger(String s){
-        TextView tv = createTextView(s);
-        logger.addView(tv);  // block here one the addView dunno why. (not in createTextView)
-        ((ScrollView)logger.getParent()).fullScroll(View.FOCUS_DOWN);
-    }
-
-    private TextView createTextView(String s){
-        TextView t = new TextView(logger.getContext());
-        t.setTextSize(12);
-        t.setTextColor(Color.BLACK);
-        t.setText(s);
-        /*LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-            ViewGroup.LayoutParams.FILL_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT);
-        t.setLayoutParams(params);*/
-        return t;
+        class OneShotTask implements Runnable {
+            String str;
+            OneShotTask(String s) { str = s; }
+            public void run() {
+                ((ArrayAdapter)logList.getAdapter()).add(str);
+                logList.invalidate();
+                logList.setSelection(logList.getCount());
+            }
+        }
+        mActivity.runOnUiThread(new OneShotTask(s));
     }
 
     private void doSend(FixedSizePacket data){
