@@ -33,6 +33,10 @@ public class AndroidJArduinoGUI extends Activity {
     private int REQUEST_ENABLE_BT = 2000; //What you want here.
     List<Button> buttons = new ArrayList<Button>();
     Button ping;
+    Button run;
+    Button save;
+    Button load;
+    CheckBox saving;
     static final int CUSTOM_DIALOG_ID = 0;
     ListView dialog_ListView;
     ArrayAdapter<String> logger;
@@ -155,9 +159,9 @@ public class AndroidJArduinoGUI extends Activity {
         Thread mThread = new Thread(){
             @Override
             public void run() {
-                super.run();    //To change body of overridden methods use File | Settings | File Templates.
+                super.run();
 
-                mController = new GUIController(logList, AndroidJArduinoGUI.this);
+                mController = new GUIController(logList, AndroidJArduinoGUI.this, saving);
                 AndroidBluetooth4JArduino device = new AndroidBluetooth4JArduino(new AndroidBluetoothConfiguration(mmSocket));
                 mController.register(device);
                 device.register(mController);
@@ -186,6 +190,10 @@ public class AndroidJArduinoGUI extends Activity {
         buttons.add(((Button) findViewById(R.id.pinA4)));
         buttons.add(((Button) findViewById(R.id.pinA5)));
         ping = (Button)findViewById(R.id.ping);
+        run = (Button)findViewById(R.id.run);
+        save = (Button)findViewById(R.id.save);
+        load = (Button)findViewById(R.id.load);
+        saving = (CheckBox)findViewById(R.id.saving);
 
         for(final Button b : buttons){
             b.setOnClickListener(new Button.OnClickListener(){
@@ -198,6 +206,22 @@ public class AndroidJArduinoGUI extends Activity {
         ping.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View view) {
                 mController.sendping();
+            }
+        });
+        save.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View view) {
+                mController.toFile();
+            }
+        });
+        load.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View view) {
+                mController.fromFile();
+            }
+        });
+
+        run.setOnClickListener(new Button.OnClickListener() {
+            public void onClick(View view) {
+                mController.executeOrders();
             }
         });
     }
