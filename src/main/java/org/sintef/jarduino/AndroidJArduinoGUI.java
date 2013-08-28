@@ -243,31 +243,48 @@ public class AndroidJArduinoGUI extends Activity {
                     public void onItemClick(AdapterView<?> parent, View view,
                                             int position, long id) {
                         String pin = clickedButton;
+                        DigitalPin dPin;
+                        AnalogPin aPin;
+                        PWMPin pPin;
                         switch(position){
                             case 0:
-                                mController.sendpinMode(PinMode.INPUT, digital.get(pin));
+                                dPin = digital.get(pin);
+                                if(dPin != null)
+                                    mController.sendpinMode(PinMode.INPUT, dPin);
                                 break;
                             case 1:
-                                mController.sendpinMode(PinMode.OUTPUT, digital.get(pin));
+                                dPin = digital.get(pin);
+                                if(dPin != null)
+                                    mController.sendpinMode(PinMode.OUTPUT, dPin);
                                 break;
                             case 2:
-                                mController.senddigitalWrite(digital.get(pin), DigitalState.HIGH);
+                                dPin = digital.get(pin);
+                                if(dPin != null)
+                                    mController.senddigitalWrite(dPin, DigitalState.HIGH);
                                 break;
                             case 3:
-                                mController.senddigitalWrite(digital.get(pin), DigitalState.LOW);
+                                dPin = digital.get(pin);
+                                if(dPin != null)
+                                    mController.senddigitalWrite(dPin, DigitalState.LOW);
                                 break;
                             case 4:
-                                mController.senddigitalRead(digital.get(pin));
+                                dPin = digital.get(pin);
+                                if(dPin != null)
+                                    mController.senddigitalRead(dPin);
                                 break;
                             case 5:
-                                mController.sendanalogRead(analogIn.get(pin));
+                                aPin = analogIn.get(pin);
+                                if(aPin != null)
+                                    mController.sendanalogRead(aPin);
                                 break;
                             case 6:
                                 int analogValue = Integer.parseInt(tv.getText().toString());
                                 if(analogValue>255){
                                     break;
                                 }
-                                mController.sendanalogWrite(analogOut.get(pin), Integer.valueOf(analogValue).byteValue());
+                                pPin = analogOut.get(pin);
+                                if(pPin != null)
+                                    mController.sendanalogWrite(pPin, Integer.valueOf(analogValue).byteValue());
                                 break;
                         }
 
