@@ -35,6 +35,8 @@ public class AndroidJArduinoGUI extends Activity {
     Button ping;
     Button run;
     Button save;
+    Button reset;
+    Button clear;
     Button load;
     CheckBox saving;
     static final int CUSTOM_DIALOG_ID = 0;
@@ -194,6 +196,8 @@ public class AndroidJArduinoGUI extends Activity {
         save = (Button)findViewById(R.id.save);
         load = (Button)findViewById(R.id.load);
         saving = (CheckBox)findViewById(R.id.saving);
+        clear = (Button)findViewById(R.id.clear);
+        reset = (Button)findViewById(R.id.reset);
 
         for(final Button b : buttons){
             b.setOnClickListener(new Button.OnClickListener(){
@@ -218,10 +222,19 @@ public class AndroidJArduinoGUI extends Activity {
                 mController.fromFile();
             }
         });
-
         run.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View view) {
                 mController.executeOrders();
+            }
+        });
+        clear.setOnClickListener(new Button.OnClickListener(){
+            public void onClick(View view){
+                mController.clearOrders();
+            }
+        });
+        reset.setOnClickListener(new Button.OnClickListener(){
+            public void onClick(View view){
+                mController.resetFile();
             }
         });
     }

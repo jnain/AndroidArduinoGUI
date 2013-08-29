@@ -25,4 +25,12 @@ public class LogAnalogObject extends LogObject<AnalogPin> {
     public void setPin(AnalogPin p) {
         this.pin = p;
     }
+
+    public String toString(){
+        return String.valueOf("Analog[" + getPin() + "," +
+                getAddr() + "," +
+                getB() + "," +
+                getMode() + "," +
+                getVal() + "]");
+    }
 }

@@ -25,4 +25,12 @@ public class LogDigitalObject extends LogObject<DigitalPin> {
     public void setPin(DigitalPin p) {
         this.pin = p;
     }
+
+    public String toString(){
+        return String.valueOf("Digital[" + getPin() + "," +
+                getAddr() + "," +
+                getB() + "," +
+                getMode() + "," +
+                getVal() + "]");
+    }
 }

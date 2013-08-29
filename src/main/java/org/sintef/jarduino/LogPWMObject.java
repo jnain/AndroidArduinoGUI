@@ -25,4 +25,12 @@ public class LogPWMObject extends LogObject<PWMPin> {
     public void setPin(PWMPin p) {
         this.pin = p;
     }
+
+    public String toString(){
+        return String.valueOf("Pwm[" + getPin() + "," +
+                getAddr() + "," +
+                getB() + "," +
+                getMode() + "," +
+                getVal() + "]");
+    }
 }

@@ -42,7 +42,6 @@ public class GUIController implements JArduinoObserver, JArduinoClientSubject {
     private List<JArduinoClientObserver> handlers;
     private List<LogObject> orders;
     private SimpleDateFormat dateFormat;
-    private JArduino mJArduino;
     private String TAG = "GUIController";
     private ListView logList;
     private Activity mActivity;
@@ -62,7 +61,7 @@ public class GUIController implements JArduinoObserver, JArduinoClientSubject {
             String str;
             OneShotTask(String s) { str = s; }
             public void run() {
-                ((ArrayAdapter)logList.getAdapter()).add(str);
+                ((ArrayAdapter<String>)logList.getAdapter()).add(str);
                 logList.invalidate();
                 logList.setSelection(logList.getCount());
             }
@@ -93,188 +92,6 @@ public class GUIController implements JArduinoObserver, JArduinoClientSubject {
                 orders.add(new LogDigitalObject(pin, "output", (short) -1, (short) -1, (byte) -1));
         }
         doSend(fsp);
-    }
-
-    public void toFile(){
-        Log.d(TAG, "toFile");
-        FileOutputStream output = null;
-        String filename = ".saved";
-
-        try {
-            output = mActivity.openFileOutput(filename, Context.MODE_PRIVATE);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        if(output == null){
-            Log.d(TAG, "open issue");
-            return;
-        }
-        for(LogObject o : orders){
-            if(o instanceof LogDigitalObject){
-                LogDigitalObject digital =(LogDigitalObject) o;
-
-                try {
-                    output.write(String.valueOf("Digital[" + digital.getPin() + "," +
-                            digital.getAddr() + "," +
-                            digital.getB() + "," +
-                            digital.getMode() + "," +
-                            digital.getVal() + "]").getBytes());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            }
-            if(o instanceof LogAnalogObject){
-                LogAnalogObject analog =(LogAnalogObject) o;
-
-                try {
-                    output.write(String.valueOf("Analog[" + analog.getPin() + "," +
-                            analog.getAddr() + "," +
-                            analog.getB() + "," +
-                            analog.getMode() + "," +
-                            analog.getVal() + "]").getBytes());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            if(o instanceof LogPWMObject){
-                LogPWMObject pwm =(LogPWMObject) o;
-
-                try {
-                    output.write(String.valueOf("Pwm[" + pwm.getPin() + "," +
-                            pwm.getAddr() + "," +
-                            pwm.getB() + "," +
-                            pwm.getMode() + "," +
-                            pwm.getVal() + "]").getBytes());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        try {
-            output.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public String getWord(FileInputStream in, char separator){
-        int b;
-        String word = "";
-        try {
-            while((b = in.read()) != separator){
-                word += b;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return word;
-    }
-
-    public void fromFile(){
-
-        StringBuffer fileContent = new StringBuffer("");
-
-        byte[] buffer = new byte[1024];
-
-
-
-
-        Log.d(TAG, "fromFile");
-        FileInputStream input = null;
-        String filename = ".saved";
-
-        orders.clear();
-
-        try {
-            input = mActivity.openFileInput(filename);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        if(input == null){
-            Log.d(TAG, "open issue");
-            return;
-        }
-
-        try {
-            while (input.read(buffer) != -1) {
-                fileContent.append(new String(buffer));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-
-        char c;
-        String word = "";
-        int pointer = 0;
-
-        Log.d(TAG, fileContent.toString());
-
-        while(pointer < fileContent.lastIndexOf("]")){
-            word = fileContent.substring(pointer);
-            Log.d(TAG, word);
-            word = word.substring(0, word.indexOf("["));
-            Log.d(TAG, word);
-            if(word.equals("Digital")){
-                pointer += fileContent.substring(pointer).indexOf("[")+1;
-                int finalPointer = fileContent.substring(pointer).indexOf("]") + pointer;
-                String object = fileContent.substring(pointer, finalPointer);
-                finalPointer ++;
-
-                String data[] = object.split(",");
-                LogDigitalObject digital = new LogDigitalObject();
-
-                digital.setPin(DigitalPin.A_0.valueOf(data[0]));
-                digital.setAddr(Short.parseShort(data[1]));
-                digital.setB(Byte.parseByte(data[2]));
-                digital.setMode(data[3]);
-                digital.setVal(Short.parseShort(data[4]));
-                orders.add(digital);
-                pointer = finalPointer;
-            }
-            if(word.equals("Analog")){
-                pointer += fileContent.substring(pointer).indexOf("[")+1;
-                int finalPointer = fileContent.substring(pointer).indexOf("]") + pointer;
-                String object = fileContent.substring(pointer, finalPointer);
-                finalPointer ++;
-
-                String data[] = object.split(",");
-                LogAnalogObject analog = new LogAnalogObject();
-
-                analog.setPin(AnalogPin.valueOf(data[0]));
-                analog.setAddr(Short.parseShort(data[1]));
-                analog.setB(Byte.parseByte(data[2]));
-                analog.setMode(data[3]);
-                analog.setVal(Short.parseShort(data[4]));
-                orders.add(analog);
-                pointer = finalPointer;
-            }
-            if(word.equals("Pwm")){
-                pointer += fileContent.substring(pointer).indexOf("[")+1;
-                int finalPointer = fileContent.substring(pointer).indexOf("]") + pointer;
-                String object = fileContent.substring(pointer, finalPointer);
-                finalPointer ++;
-
-                String data[] = object.split(",");
-                LogPWMObject pwm = new LogPWMObject();
-
-                pwm.setPin(PWMPin.valueOf(data[0]));
-                pwm.setAddr(Short.parseShort(data[1]));
-                pwm.setB(Byte.parseByte(data[2]));
-                pwm.setMode(data[3]);
-                pwm.setVal(Short.parseShort(data[4]));
-                orders.add(pwm);
-                pointer = finalPointer;
-            }
-        }
-
-        try {
-            input.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public final void senddigitalRead(DigitalPin pin) {
@@ -346,12 +163,156 @@ public class GUIController implements JArduinoObserver, JArduinoClientSubject {
 
     public void unregisterAll(){
         AndroidBluetooth4JArduino temp;
-        for (int i = 0; i < handlers.size(); i++){
-            temp = (AndroidBluetooth4JArduino) handlers.get(i);
+        for(JArduinoClientObserver handler: handlers){
+            temp = (AndroidBluetooth4JArduino) handler;
             Log.d(TAG, "Closer " + temp);
             //temp.close();
         }
         handlers.clear();
         Log.d(TAG, "Size = " + handlers.size());
+    }
+
+    public void toFile(){
+        Log.d(TAG, "toFile");
+        FileOutputStream output = null;
+        String filename = ".saved";
+
+        try {
+            output = mActivity.openFileOutput(filename, Context.MODE_PRIVATE);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        if(output == null){
+            Log.d(TAG, "open issue");
+            return;
+        }
+
+        try {
+            for(LogObject o : orders){
+                output.write(o.toString().getBytes());
+            }
+            output.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void fromFile(){
+        StringBuilder fileContent = new StringBuilder("");
+        byte[] buffer = new byte[1024];
+
+        Log.d(TAG, "fromFile");
+        FileInputStream input = null;
+        String filename = ".saved";
+
+        orders.clear();
+
+        try {
+            input = mActivity.openFileInput(filename);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        if(input == null){
+            Log.d(TAG, "open issue");
+            return;
+        }
+
+        try {
+            while (input.read(buffer) != -1) {
+                fileContent.append(new String(buffer));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        String word;
+        int pointer = 0;
+
+        Log.d(TAG, fileContent.toString());
+
+        while(pointer < fileContent.lastIndexOf("]")){
+            word = fileContent.substring(pointer);
+            word = word.substring(0, word.indexOf("["));
+            Log.d(TAG, word);
+            if(word.equals("Digital")){
+                pointer += fileContent.substring(pointer).indexOf("[")+1;
+                int finalPointer = fileContent.substring(pointer).indexOf("]") + pointer;
+                String object = fileContent.substring(pointer, finalPointer);
+                finalPointer ++;
+
+                String data[] = object.split(",");
+                LogDigitalObject digital = new LogDigitalObject();
+                addOrder(digital, data);
+                pointer = finalPointer;
+            }
+            if(word.equals("Analog")){
+                pointer += fileContent.substring(pointer).indexOf("[")+1;
+                int finalPointer = fileContent.substring(pointer).indexOf("]") + pointer;
+                String object = fileContent.substring(pointer, finalPointer);
+                finalPointer ++;
+
+                String data[] = object.split(",");
+                LogAnalogObject analog = new LogAnalogObject();
+                addOrder(analog, data);
+                pointer = finalPointer;
+            }
+            if(word.equals("Pwm")){
+                pointer += fileContent.substring(pointer).indexOf("[")+1;
+                int finalPointer = fileContent.substring(pointer).indexOf("]") + pointer;
+                String object = fileContent.substring(pointer, finalPointer);
+                finalPointer ++;
+
+                String data[] = object.split(",");
+                LogPWMObject pwm = new LogPWMObject();
+                addOrder(pwm, data);
+                pointer = finalPointer;
+            }
+        }
+
+        try {
+            input.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void addOrder(LogObject lo, String[] data){
+        if(lo instanceof LogAnalogObject)
+            ((LogAnalogObject)lo).setPin(AnalogPin.valueOf(data[0]));
+        if(lo instanceof LogDigitalObject)
+            ((LogDigitalObject)lo).setPin(DigitalPin.valueOf(data[0]));
+        if(lo instanceof LogPWMObject)
+            ((LogPWMObject)lo).setPin(PWMPin.valueOf(data[0]));
+        lo.setAddr(Short.parseShort(data[1]));
+        lo.setB(Byte.parseByte(data[2]));
+        lo.setMode(data[3]);
+        lo.setVal(Short.parseShort(data[4]));
+        orders.add(lo);
+    }
+
+    public void clearOrders(){
+        orders.clear();
+    }
+
+    public void resetFile(){
+        Log.d(TAG, "toFile");
+        FileOutputStream output = null;
+        String filename = ".saved";
+
+        try {
+            output = mActivity.openFileOutput(filename, Context.MODE_PRIVATE);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        if(output == null){
+            Log.d(TAG, "open issue");
+            return;
+        }
+        try {
+            output.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
