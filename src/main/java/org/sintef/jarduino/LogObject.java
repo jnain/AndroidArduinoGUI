@@ -58,4 +58,8 @@ abstract public class LogObject<T> {
     public void setB(byte b) {
         this.b = b;
     }
+
+    public String toLog(){
+        return getMode()+": [pin: "+getPin()+"] [value: "+getVal()+"]";
+    }
 }

@@ -7,7 +7,11 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 import org.sintef.jarduino.comm.AndroidBluetooth4JArduino;
@@ -38,12 +42,13 @@ public class AndroidJArduinoGUI extends Activity {
     Button reset;
     Button clear;
     Button load;
-    CheckBox saving;
     static final int CUSTOM_DIALOG_ID = 0;
     ListView dialog_ListView;
-    ArrayAdapter<String> logger;
+    LogAdapter logger;
     ListView logList;
     Dialog dialog = null;
+    public static String loadFile;
+    public static String saveFile;
     String[] menuContent = {
             "PinMode INPUT",
             "PinMode OUTPUT",
@@ -105,11 +110,20 @@ public class AndroidJArduinoGUI extends Activity {
 
         getWindow().setBackgroundDrawableResource(R.drawable.bg_arduino);
 
-        setContentView(R.layout.main);
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        loadFile = sp.getString(getString(R.string.pref_loadfile), ".file");
+        saveFile = sp.getString(getString(R.string.pref_savefile), ".file");
+
+        setContentView(R.layout.mainnew);
         logList = (ListView) findViewById(R.id.log);
-        logger = new ArrayAdapter<String>(getApplicationContext(), R.layout.logitem);
+        logger = new LogAdapter(getApplicationContext(), R.layout.logitem);
         logList.setAdapter(logger);
         logList.setVerticalScrollBarEnabled(true);
+        logList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                ((LogAdapter) adapterView.getAdapter()).remove(((LogAdapter) adapterView.getAdapter()).getItem(i));
+            }
+        });
         ((LinearLayout)logList.getParent()).setVerticalScrollBarEnabled(true);
 
         initButtons();
@@ -163,13 +177,29 @@ public class AndroidJArduinoGUI extends Activity {
             public void run() {
                 super.run();
 
-                mController = new GUIController(logList, AndroidJArduinoGUI.this, saving);
+                mController = new GUIController(logList, AndroidJArduinoGUI.this);
                 AndroidBluetooth4JArduino device = new AndroidBluetooth4JArduino(new AndroidBluetoothConfiguration(mmSocket));
                 mController.register(device);
                 device.register(mController);
             }
         };
         mThread.run();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.preferences:
+                startActivity(new Intent(getApplicationContext(), Preferences.class));
+                return true;
+        }
+        return false;
     }
 
     void initButtons(){
@@ -195,7 +225,6 @@ public class AndroidJArduinoGUI extends Activity {
         run = (Button)findViewById(R.id.run);
         save = (Button)findViewById(R.id.save);
         load = (Button)findViewById(R.id.load);
-        saving = (CheckBox)findViewById(R.id.saving);
         clear = (Button)findViewById(R.id.clear);
         reset = (Button)findViewById(R.id.reset);
 
@@ -229,7 +258,8 @@ public class AndroidJArduinoGUI extends Activity {
         });
         clear.setOnClickListener(new Button.OnClickListener(){
             public void onClick(View view){
-                mController.clearOrders();
+                ((LogAdapter) logList.getAdapter()).clear();
+                ((LogAdapter) logList.getAdapter()).notifyDataSetChanged();
             }
         });
         reset.setOnClickListener(new Button.OnClickListener(){
@@ -274,7 +304,7 @@ public class AndroidJArduinoGUI extends Activity {
                 dialog_ListView = (ListView)dialog.findViewById(R.id.dialoglist);
                 ArrayAdapter<String> adapter
                         = new ArrayAdapter<String>(this,
-                        R.layout.item, menuContent);
+                        android.R.layout.select_dialog_item, menuContent);
                 dialog_ListView.setAdapter(adapter);
                 dialog_ListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
                     public void onItemClick(AdapterView<?> parent, View view,

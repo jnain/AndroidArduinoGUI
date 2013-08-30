@@ -20,8 +20,6 @@ package org.sintef.jarduino;
 import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
-import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.ListView;
 import org.sintef.jarduino.comm.AndroidBluetooth4JArduino;
 import org.sintef.jarduino.observer.JArduinoClientObserver;
@@ -45,34 +43,39 @@ public class GUIController implements JArduinoObserver, JArduinoClientSubject {
     private String TAG = "GUIController";
     private ListView logList;
     private Activity mActivity;
-    private CheckBox mSave;
+    private boolean running = false;
 
-    public GUIController(ListView logger, Activity activity, CheckBox box){
+    public GUIController(ListView logger, Activity activity){
         orders = new ArrayList<LogObject>();
         this.logList = logger;
         mActivity = activity;
-        mSave = box;
         handlers = new LinkedList<JArduinoClientObserver>();
         dateFormat = new SimpleDateFormat("dd MMM yyy 'at' HH:mm:ss.SSS");
     }
 
-    private void addToLogger(String s){
+    private void addToLogger(String s, LogObject o){
         class OneShotTask implements Runnable {
             String str;
-            OneShotTask(String s) { str = s; }
+            LogObject obj;
+            OneShotTask(String s, LogObject o) { str = s; obj = o; }
             public void run() {
-                ((ArrayAdapter<String>)logList.getAdapter()).add(str);
+                ((LogAdapter)logList.getAdapter()).add(str, obj);
                 logList.invalidate();
                 logList.setSelection(logList.getCount());
             }
         }
-        mActivity.runOnUiThread(new OneShotTask(s));
+        mActivity.runOnUiThread(new OneShotTask(s, o));
+    }
+
+    private void doSend(FixedSizePacket data, LogObject obj){
+        doSend(data);
+        if(obj != null)
+            addToLogger(data.toString(), obj);
     }
 
     private void doSend(FixedSizePacket data){
         if (data != null) {
             Log.d(TAG, data + " --> " + data.getPacket());
-            addToLogger(data.toString());
             for (JArduinoClientObserver h : handlers){
                 h.receiveMsg(data.getPacket());
             }
@@ -85,53 +88,61 @@ public class GUIController implements JArduinoObserver, JArduinoClientSubject {
     public final void sendpinMode(PinMode mode, DigitalPin pin) {
         FixedSizePacket fsp = null;
         fsp = JArduinoProtocol.createPinMode(pin, mode);
-        if(mSave.isChecked()){
+        LogObject obj = null;
+        if(!running){
             if(mode == PinMode.INPUT)
-                orders.add(new LogDigitalObject(pin, "input", (short)-1, (short)-1, (byte)-1));
+                obj = new LogDigitalObject(pin, "input", (short)-1, (short)-1, (byte)-1);
             else
-                orders.add(new LogDigitalObject(pin, "output", (short) -1, (short) -1, (byte) -1));
+                obj = new LogDigitalObject(pin, "output", (short) -1, (short) -1, (byte) -1);
         }
-        doSend(fsp);
+        doSend(fsp, obj);
     }
 
     public final void senddigitalRead(DigitalPin pin) {
         FixedSizePacket fsp = null;
         fsp = JArduinoProtocol.createDigitalRead(pin);
-        if(mSave.isChecked())
-            orders.add(new LogDigitalObject(pin, "digitalRead", (short)-1, (short)-1, (byte)-1));
-        doSend(fsp);
+        LogObject obj = null;
+        if(!running){
+            obj = new LogDigitalObject(pin, "digitalRead", (short)-1, (short)-1, (byte)-1);
+        }
+        doSend(fsp, obj);
     }
 
     public final void senddigitalWrite(DigitalPin pin, DigitalState value) {
         FixedSizePacket fsp = null;
         fsp = JArduinoProtocol.createDigitalWrite(pin, value);
-        if(mSave.isChecked()){
+        LogObject obj = null;
+        if(!running){
             if(value == DigitalState.HIGH)
-                orders.add(new LogDigitalObject(pin, "high", (short)-1, (short)-1, (byte)-1));
+                obj = new LogDigitalObject(pin, "high", (short)-1, (short)-1, (byte)-1);
             else
-                orders.add(new LogDigitalObject(pin, "low", (short) -1, (short) -1, (byte) -1));
+                obj = new LogDigitalObject(pin, "low", (short) -1, (short) -1, (byte) -1);
         }
-        doSend(fsp);
+        doSend(fsp, obj);
     }
 
     public final void sendanalogRead(AnalogPin pin) {
         FixedSizePacket fsp = null;
         fsp = JArduinoProtocol.createAnalogRead(pin);
-        if(mSave.isChecked())
-            orders.add(new LogAnalogObject(pin, "analogRead", (short)-1, (short)-1, (byte)-1));
-        doSend(fsp);
+        LogObject obj = null;
+        if(!running){
+            obj = new LogAnalogObject(pin, "analogRead", (short)-1, (short)-1, (byte)-1);
+        }
+        doSend(fsp, obj);
     }
 
     public final void sendanalogWrite(PWMPin pin, byte value) {
         FixedSizePacket fsp = null;
         fsp = JArduinoProtocol.createAnalogWrite(pin, value);
-        if(mSave.isChecked())
-            orders.add(new LogPWMObject(pin, "analogWrite", (short)-1, (short)value, (byte)-1));
-        doSend(fsp);
+        LogObject obj = null;
+        if(!running){
+            obj = new LogPWMObject(pin, "analogWrite", (short)-1, (short)value, (byte)-1);
+        }
+        doSend(fsp, obj);
     }
 
     public final void sendping() {
-        doSend(JArduinoProtocol.createPing());
+        doSend(JArduinoProtocol.createPing(), null);
     }
 
     public final void receiveMessage(byte[] packet){
@@ -139,13 +150,22 @@ public class GUIController implements JArduinoObserver, JArduinoClientSubject {
         if (data != null) {
             //gui.writeToLog( " ["+dateFormat.format(new Date(System.currentTimeMillis()))+"]: "+data.toString()+" --> "+FixedSizePacket.toString(packet));
             Log.d(TAG, /*" [" + dateFormat.format(new Date(System.currentTimeMillis())) + "]: " +*/ data.toString() /*+ " --> " + FixedSizePacket.toString(packet)*/);
-            addToLogger(data.toString());
+            addToLogger(data.toString(), null);
             //TODO Add
         }
     }
 
     public void executeOrders(){
-        new CommandExecuter(this, new ArrayList<LogObject>(orders)).run();
+        running = true;
+        List<LogObject> toDo = new ArrayList<LogObject>();
+        for(int i = 0; i< logList.getCount(); i++){
+            LogObject o = ((LogAdapter)logList.getAdapter()).getItem(i).getmObject();
+            if(o != null)
+                toDo.add(o);
+        }
+        //new CommandExecuter(this, new ArrayList<LogObject>(orders)).run();
+        new CommandExecuter(this, toDo).run();
+        running = false;
     }
 
     //Methods defined in the Observer pattern specific to JArduino
@@ -175,7 +195,8 @@ public class GUIController implements JArduinoObserver, JArduinoClientSubject {
     public void toFile(){
         Log.d(TAG, "toFile");
         FileOutputStream output = null;
-        String filename = ".saved";
+
+        String filename = ((AndroidJArduinoGUI) mActivity).saveFile;
 
         try {
             output = mActivity.openFileOutput(filename, Context.MODE_PRIVATE);
@@ -189,8 +210,13 @@ public class GUIController implements JArduinoObserver, JArduinoClientSubject {
         }
 
         try {
-            for(LogObject o : orders){
+            /*for(LogObject o : orders){
                 output.write(o.toString().getBytes());
+            } */
+            for(int i=0; i<logList.getCount(); i++){
+                LogObject o = ((LogAdapter)logList.getAdapter()).getItem(i).getmObject();
+                if(o != null)
+                    output.write(o.toString().getBytes());
             }
             output.close();
         } catch (IOException e) {
@@ -204,9 +230,8 @@ public class GUIController implements JArduinoObserver, JArduinoClientSubject {
 
         Log.d(TAG, "fromFile");
         FileInputStream input = null;
-        String filename = ".saved";
 
-        orders.clear();
+        String filename = ((AndroidJArduinoGUI) mActivity).loadFile;
 
         try {
             input = mActivity.openFileInput(filename);
@@ -234,7 +259,6 @@ public class GUIController implements JArduinoObserver, JArduinoClientSubject {
         while(pointer < fileContent.lastIndexOf("]")){
             word = fileContent.substring(pointer);
             word = word.substring(0, word.indexOf("["));
-            Log.d(TAG, word);
             if(word.equals("Digital")){
                 pointer += fileContent.substring(pointer).indexOf("[")+1;
                 int finalPointer = fileContent.substring(pointer).indexOf("]") + pointer;
@@ -288,7 +312,8 @@ public class GUIController implements JArduinoObserver, JArduinoClientSubject {
         lo.setB(Byte.parseByte(data[2]));
         lo.setMode(data[3]);
         lo.setVal(Short.parseShort(data[4]));
-        orders.add(lo);
+        //orders.add(lo);
+        addToLogger(lo.toLog(), lo);
     }
 
     public void clearOrders(){

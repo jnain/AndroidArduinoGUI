@@ -3,7 +3,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:id="@+id/customdialog"
               android:orientation="vertical"
-              android:layout_width="140dp"
+              android:layout_width="fill_parent"
               android:layout_height="wrap_content"
               android:paddingLeft="20dp" android:paddingRight="20dp" android:paddingBottom="20dp">
 

@@ -14,12 +14,17 @@
           <artifactId>org.sintef.jarduino.bluetooth</artifactId>
           <version>0.1.7-SNAPSHOT</version>
       </dependency>
-    <dependency>
-      <groupId>com.google.android</groupId>
-      <artifactId>android</artifactId>
-      <version>2.2.1</version>
-      <scope>provided</scope>
-    </dependency>
+      <dependency>
+          <groupId>com.google.android</groupId>
+          <artifactId>android</artifactId>
+          <version>4.1.1.4</version>
+          <scope>provided</scope>
+      </dependency>
+      <dependency>
+          <groupId>com.google.android</groupId>
+          <artifactId>support-v4</artifactId>
+          <version>r6</version>
+      </dependency>
   </dependencies>
 
   <build>
@@ -33,9 +38,10 @@
           <assetsDirectory>${project.basedir}/assets</assetsDirectory>
           <resourceDirectory>${project.basedir}/res</resourceDirectory>
           <nativeLibrariesDirectory>${project.basedir}/src/main/native</nativeLibrariesDirectory>
-          <sdk>
-            <platform>7</platform>
-          </sdk>
+            <sdk>
+                <path>${android.sdk.path}</path>
+                <platform>15</platform>
+            </sdk>
           <deleteConflictingFiles>true</deleteConflictingFiles>
           <undeployBeforeDeploy>true</undeployBeforeDeploy>
         </configuration>
