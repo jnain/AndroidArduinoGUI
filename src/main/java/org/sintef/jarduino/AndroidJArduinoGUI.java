@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,6 +36,7 @@ public class AndroidJArduinoGUI extends Activity {
 
     private String deviceName = "FireFly-4101";
     private int REQUEST_ENABLE_BT = 2000; //What you want here.
+    private final static int MENU_DELETE_ID = Menu.FIRST + 1;
     List<Button> buttons = new ArrayList<Button>();
     Button ping;
     Button run;
@@ -119,11 +121,7 @@ public class AndroidJArduinoGUI extends Activity {
         logger = new LogAdapter(getApplicationContext(), R.layout.logitem);
         logList.setAdapter(logger);
         logList.setVerticalScrollBarEnabled(true);
-        logList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                ((LogAdapter) adapterView.getAdapter()).remove(((LogAdapter) adapterView.getAdapter()).getItem(i));
-            }
-        });
+        registerForContextMenu(logList);
         ((LinearLayout)logList.getParent()).setVerticalScrollBarEnabled(true);
 
         initButtons();
@@ -184,6 +182,23 @@ public class AndroidJArduinoGUI extends Activity {
             }
         };
         mThread.run();
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        menu.add(0, MENU_DELETE_ID, 0, "Delete from log");
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        switch (item.getItemId()) {
+            case MENU_DELETE_ID:
+                logger.remove(logger.getItem(info.position));
+                return true;
+        }
+        return super.onContextItemSelected(item);
     }
 
     @Override
