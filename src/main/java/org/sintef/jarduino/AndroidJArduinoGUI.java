@@ -8,13 +8,13 @@ import android.bluetooth.BluetoothSocket;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.view.ContextMenu;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
+import android.view.*;
 import android.widget.*;
+import com.fortysevendeg.android.swipelistview.BaseSwipeListViewListener;
+import com.fortysevendeg.android.swipelistview.SwipeListView;
 import org.sintef.jarduino.comm.AndroidBluetooth4JArduino;
 import org.sintef.jarduino.comm.AndroidBluetoothConfiguration;
 
@@ -38,16 +38,11 @@ public class AndroidJArduinoGUI extends Activity {
     private int REQUEST_ENABLE_BT = 2000; //What you want here.
     private final static int MENU_DELETE_ID = Menu.FIRST + 1;
     List<Button> buttons = new ArrayList<Button>();
-    Button ping;
-    Button run;
-    Button save;
-    Button reset;
-    Button clear;
-    Button load;
+    Button ping, run, save, reset, clear, load, delete;
     static final int CUSTOM_DIALOG_ID = 0;
     ListView dialog_ListView;
     LogAdapter logger;
-    ListView logList;
+    SwipeListView logList;
     Dialog dialog = null;
     public static String loadFile;
     public static String saveFile;
@@ -117,12 +112,66 @@ public class AndroidJArduinoGUI extends Activity {
         saveFile = sp.getString(getString(R.string.pref_savefile), ".file");
 
         setContentView(R.layout.mainnew);
-        logList = (ListView) findViewById(R.id.log);
+        logList = (SwipeListView) findViewById(R.id.log);
         logger = new LogAdapter(getApplicationContext(), R.layout.logitem);
         logList.setAdapter(logger);
         logList.setVerticalScrollBarEnabled(true);
         registerForContextMenu(logList);
         ((LinearLayout)logList.getParent()).setVerticalScrollBarEnabled(true);
+
+        if (Build.VERSION.SDK_INT >= 11) {
+            logList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            logList.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+
+                public void onItemCheckedStateChanged(ActionMode mode, int position,
+                                                      long id, boolean checked) {
+                    mode.setTitle("Selected (" + logList.getCountSelected() + ")");
+                }
+
+                public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                    int id = item.getItemId();
+                    if (id == R.id.menu_delete) {
+                        logList.dismissSelected();
+                        return true;
+                    }
+                    return false;
+                }
+
+                public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                    MenuInflater inflater = mode.getMenuInflater();
+                    inflater.inflate(R.menu.menu_choice_items, menu);
+                    return true;
+                }
+
+                public void onDestroyActionMode(ActionMode mode) {
+                    logList.unselectedChoiceStates();
+                }
+
+                public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                    return false;
+                }
+            });
+        }
+
+        logList.setSwipeListViewListener(new BaseSwipeListViewListener() {
+            @Override
+            public void onListChanged() {
+                logList.closeOpenedItems();
+            }
+
+            @Override
+            public void onDismiss(int[] reverseSortedPositions) {
+                for (int position : reverseSortedPositions) {
+                    logger.remove(logger.getItem(position));
+                }
+                logger.notifyDataSetChanged();
+            }
+        });
+
+        /* USELESS
+        ViewHelper vh;*/
 
         initButtons();
 
@@ -242,6 +291,7 @@ public class AndroidJArduinoGUI extends Activity {
         load = (Button)findViewById(R.id.load);
         clear = (Button)findViewById(R.id.clear);
         reset = (Button)findViewById(R.id.reset);
+        delete = (Button)findViewById(R.id.delete);
 
         for(final Button b : buttons){
             b.setOnClickListener(new Button.OnClickListener(){
